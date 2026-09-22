@@ -1,0 +1,1944 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>CartelGo</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon-64.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <style>
+    :root{
+      --ui-bg:#f3f4f6;
+      --ui-card:#ffffff;
+      --ui-card-2:#f8fafc;
+      --ui-text:#111827;
+      --ui-muted:#6b7280;
+      --ui-border:#d1d5db;
+      --ui-accent:#2563eb;
+      --ui-accent-text:#ffffff;
+      --ui-input:#ffffff;
+      --shadow:0 14px 40px rgba(0,0,0,.08);
+    }
+    html[data-theme="dark"]{
+      --ui-bg:#0f172a;
+      --ui-card:#111827;
+      --ui-card-2:#0b1220;
+      --ui-text:#f8fafc;
+      --ui-muted:#94a3b8;
+      --ui-border:#334155;
+      --ui-accent:#3b82f6;
+      --ui-accent-text:#ffffff;
+      --ui-input:#0b1220;
+      --shadow:0 14px 40px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family:Arial,Helvetica,sans-serif;
+      background:var(--ui-bg);
+      color:var(--ui-text);
+    }
+    body{min-height:100vh}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+
+    .app{
+      width:min(980px,100%);
+      margin:0 auto;
+      padding:16px;
+    }
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:clamp(1.7rem,5vw,2.4rem);
+      line-height:1.05;
+    }
+    .brand p{
+      margin:7px 0 0;
+      color:var(--ui-muted);
+      line-height:1.35;
+    }
+    .theme-btn{
+      border:1px solid var(--ui-border);
+      background:var(--ui-card);
+      color:var(--ui-text);
+      border-radius:14px;
+      padding:10px 13px;
+      white-space:nowrap;
+    }
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .app-logo{
+      width:58px;
+      height:58px;
+      object-fit:contain;
+      border-radius:14px;
+      flex:0 0 auto;
+      filter:drop-shadow(0 6px 14px rgba(0,0,0,.18));
+    }
+
+    .card{
+      background:var(--ui-card);
+      border:1px solid var(--ui-border);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .section-title{
+      margin:0 0 12px;
+      font-size:1.08rem;
+    }
+    .subcard{
+      background:var(--ui-card-2);
+      border:1px solid var(--ui-border);
+      border-radius:16px;
+      padding:14px;
+      margin-top:12px;
+    }
+    .subcard summary{
+      cursor:pointer;
+      font-weight:900;
+      font-size:1.02rem;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .subcard summary::-webkit-details-marker{display:none}
+    .subcard summary::after{content:"＋";font-size:1.1rem;color:var(--ui-muted)}
+    .subcard[open] summary::after{content:"−"}
+    .subcard-body{padding-top:14px}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .full{grid-column:1/-1}
+    .field label,.group-title{
+      display:block;
+      font-weight:800;
+      margin-bottom:7px;
+    }
+    .hint{
+      font-size:.84rem;
+      color:var(--ui-muted);
+      margin-top:6px;
+      line-height:1.35;
+    }
+    input[type="text"],select,input[type="number"]{
+      width:100%;
+      border:1px solid var(--ui-border);
+      background:var(--ui-input);
+      color:var(--ui-text);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+    }
+    input[type="file"]{
+      width:100%;
+      border:1px dashed var(--ui-border);
+      background:var(--ui-input);
+      color:var(--ui-text);
+      border-radius:12px;
+      padding:11px;
+    }
+    input[type="text"]:focus,select:focus,input[type="number"]:focus{
+      border-color:var(--ui-accent);
+      box-shadow:0 0 0 3px rgba(59,130,246,.15);
+    }
+    .range-row{
+      display:grid;
+      grid-template-columns:1fr 76px;
+      gap:10px;
+      align-items:center;
+    }
+    input[type="range"]{width:100%}
+    .checks{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 18px;
+      align-items:center;
+      min-height:42px;
+    }
+    .check{
+      display:flex!important;
+      align-items:center;
+      gap:8px;
+      font-weight:700!important;
+      margin:0!important;
+    }
+    .colors{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .color-item{
+      display:flex!important;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid var(--ui-border);
+      border-radius:13px;
+      padding:9px 11px;
+      margin:0!important;
+    }
+    input[type="color"]{
+      width:52px;
+      height:38px;
+      border:0;
+      background:transparent;
+      padding:0;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:13px 17px;
+      font-weight:900;
+    }
+    .btn-primary{
+      background:var(--ui-accent);
+      color:var(--ui-accent-text);
+      flex:1;
+      min-width:180px;
+    }
+    .btn-secondary{
+      background:transparent;
+      color:var(--ui-text);
+      border:1px solid var(--ui-border);
+    }
+    .footer-note{
+      color:var(--ui-muted);
+      font-size:.84rem;
+      margin:14px 2px 0;
+      line-height:1.45;
+    }
+    .line-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:4px 9px;
+      border-radius:999px;
+      background:var(--ui-bg);
+      color:var(--ui-muted);
+      font-size:.8rem;
+      font-weight:800;
+    }
+    .image-preview-wrap{
+      display:grid;
+      grid-template-columns:minmax(130px,220px) 1fr;
+      gap:12px;
+      align-items:center;
+      margin-top:10px;
+    }
+    .image-preview{
+      width:100%;
+      aspect-ratio:16/9;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid var(--ui-border);
+      background:#000;
+    }
+    .mini-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .mini-btn{
+      border:1px solid var(--ui-border);
+      background:transparent;
+      color:var(--ui-text);
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:800;
+    }
+
+
+    .saved-section{
+      margin-top:22px;
+      padding-top:2px;
+    }
+    .save-bar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:end;
+    }
+    .preset-list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .preset-empty{
+      border:1px dashed var(--ui-border);
+      border-radius:13px;
+      padding:16px;
+      color:var(--ui-muted);
+      text-align:center;
+    }
+    .preset-item{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;
+      align-items:center;
+      border:1px solid var(--ui-border);
+      border-radius:14px;
+      padding:11px 12px;
+      background:var(--ui-card-2);
+    }
+    .preset-title{
+      font-weight:900;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .preset-meta{
+      margin-top:4px;
+      font-size:.8rem;
+      color:var(--ui-muted);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .preset-actions{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .preset-seq{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      font-size:.82rem;
+      font-weight:800;
+      margin-top:8px;
+    }
+    .sequence-box{
+      margin-top:14px;
+      padding:14px;
+      border:1px solid var(--ui-border);
+      border-radius:15px;
+      background:var(--ui-card-2);
+    }
+    .sequence-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .sequence-head h3{margin:0;font-size:1rem}
+    .sequence-controls{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .status-line{
+      min-height:1.2em;
+      margin-top:10px;
+      color:var(--ui-muted);
+      font-size:.84rem;
+    }
+    .sequence-badge{
+      position:absolute;
+      left:max(10px,env(safe-area-inset-left));
+      bottom:max(10px,env(safe-area-inset-bottom));
+      z-index:4;
+      max-width:70vw;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#fff;
+      background:rgba(0,0,0,.56);
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:.8rem;
+      backdrop-filter:blur(6px);
+      opacity:.82;
+    }
+    @media(max-width:700px){
+      .save-bar{grid-template-columns:1fr}
+      .preset-item{grid-template-columns:1fr}
+      .preset-actions{justify-content:flex-start}
+      .sequence-controls{grid-template-columns:1fr}
+    }
+
+    /* CARTEL */
+    #displayView{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      overflow:hidden;
+      z-index:1000;
+      background:#000;
+      touch-action:manipulation;
+    }
+    #poster{
+      position:relative;
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      background:#000;
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:cover;
+    }
+    #posterOverlay{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:rgba(0,0,0,0);
+    }
+    #posterRows{
+      position:relative;
+      z-index:1;
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+    .poster-row{
+      position:relative;
+      flex:1 1 0;
+      min-height:0;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      padding:1.5vh 2vw;
+    }
+    .motion-wrap{
+      display:inline-block;
+      white-space:nowrap;
+      will-change:transform;
+    }
+    .poster-text{
+      display:inline-block;
+      white-space:nowrap;
+      line-height:.90;
+      text-align:center;
+      transform-origin:center center;
+      will-change:transform,opacity;
+      font-weight:700;
+    }
+
+    .fx-blink{
+      animation:blink var(--blink-speed,1.2s) steps(1,end) infinite;
+    }
+    @keyframes blink{
+      0%,49%{opacity:1}
+      50%,100%{opacity:.06}
+    }
+
+    .fx-pulse{
+      animation:pulse var(--pulse-speed,1.4s) ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(.84)}
+    }
+
+    .move-left{
+      animation:scrollLeft var(--scroll-speed,6s) linear infinite;
+    }
+    .move-right{
+      animation:scrollRight var(--scroll-speed,6s) linear infinite;
+    }
+    @keyframes scrollLeft{
+      from{transform:translateX(calc(50vw + 50%))}
+      to{transform:translateX(calc(-50vw - 50%))}
+    }
+    @keyframes scrollRight{
+      from{transform:translateX(calc(-50vw - 50%))}
+      to{transform:translateX(calc(50vw + 50%))}
+    }
+
+    .led{
+      font-family:monospace!important;
+      letter-spacing:.08em;
+      filter:saturate(1.25);
+      text-shadow:
+        0 0 4px currentColor,
+        0 0 9px currentColor,
+        0 0 18px currentColor;
+    }
+
+    .display-controls{
+      position:absolute;
+      top:max(9px,env(safe-area-inset-top));
+      right:max(9px,env(safe-area-inset-right));
+      z-index:4;
+      display:flex;
+      gap:8px;
+      opacity:.18;
+      transition:opacity .2s ease;
+    }
+    #displayView.controls-visible .display-controls{opacity:.96}
+    .display-btn{
+      border:1px solid rgba(255,255,255,.48);
+      background:rgba(0,0,0,.55);
+      color:#fff;
+      backdrop-filter:blur(6px);
+      border-radius:999px;
+      min-width:44px;
+      min-height:44px;
+      padding:8px 13px;
+      font-weight:900;
+    }
+    .rotate-tip{
+      position:absolute;
+      left:50%;
+      bottom:max(16px,env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      color:#fff;
+      background:rgba(0,0,0,.62);
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;
+      padding:8px 13px;
+      font-size:.84rem;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .2s ease;
+      z-index:4;
+      white-space:nowrap;
+    }
+    .rotate-tip.show{opacity:.92}
+
+    @media(max-width:700px){
+      .app{padding:12px}
+      .grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .card{padding:14px;border-radius:16px}
+      .topbar{align-items:flex-start}
+      .theme-btn{padding:9px 11px}
+      .colors{grid-template-columns:1fr}
+      .image-preview-wrap{grid-template-columns:1fr}
+      .image-preview{max-width:280px}
+    }
+  </style>
+</head>
+<body>
+  <main id="configView" class="app">
+    <div class="topbar">
+      <div class="brand-wrap">
+        <img src="./icon-192.png" alt="Icono de la app" class="app-logo">
+        <div class="brand">
+          <h1>CartelGo</h1>
+          <p>Crea carteles de una, dos o tres líneas para mostrarlos a pantalla completa.</p>
+        </div>
+      </div>
+      <button id="themeBtn" class="theme-btn" type="button">☀️ Claro</button>
+    </div>
+
+    <section class="card">
+      <h2 class="section-title">Fondo y pantalla</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="bgType">Tipo de fondo</label>
+          <select id="bgType">
+            <option value="solid">Color sólido</option>
+            <option value="gradient">Degradado</option>
+            <option value="image">Imagen de la galería</option>
+          </select>
+        </div>
+
+        <div class="field" id="gradientDirectionField">
+          <label for="gradientDirection">Dirección del degradado</label>
+          <select id="gradientDirection">
+            <option value="90deg">Izquierda → derecha</option>
+            <option value="270deg">Derecha → izquierda</option>
+            <option value="180deg">Arriba → abajo</option>
+            <option value="0deg">Abajo → arriba</option>
+            <option value="135deg">Diagonal ↘</option>
+            <option value="45deg">Diagonal ↗</option>
+          </select>
+        </div>
+
+        <div class="field full" id="solidGradientColors">
+          <div class="colors">
+            <label class="color-item" for="bgColor1">
+              Fondo / color 1
+              <input id="bgColor1" type="color" value="#000000">
+            </label>
+            <label class="color-item" for="bgColor2">
+              Color 2 del degradado
+              <input id="bgColor2" type="color" value="#172554">
+            </label>
+          </div>
+        </div>
+
+        <div id="imageOptions" class="field full hidden">
+          <label for="bgImageInput">Imagen de fondo</label>
+          <input id="bgImageInput" type="file" accept="image/*">
+          <div class="hint">La imagen se guarda localmente en este dispositivo y no se sube a ningún servidor.</div>
+
+          <div class="image-preview-wrap">
+            <img id="bgImagePreview" class="image-preview hidden" alt="Vista previa del fondo">
+            <div>
+              <div class="grid">
+                <div class="field">
+                  <label for="imageFit">Ajuste</label>
+                  <select id="imageFit">
+                    <option value="cover">Cubrir toda la pantalla</option>
+                    <option value="contain">Mostrar completa</option>
+                    <option value="100% 100%">Estirar</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="imagePosition">Posición</label>
+                  <select id="imagePosition">
+                    <option value="center">Centro</option>
+                    <option value="top">Arriba</option>
+                    <option value="bottom">Abajo</option>
+                    <option value="left">Izquierda</option>
+                    <option value="right">Derecha</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="imageOverlay">Oscurecer fondo</label>
+                  <div class="range-row">
+                    <input id="imageOverlay" type="range" min="0" max="80" value="20">
+                    <input id="imageOverlayNum" type="number" min="0" max="80" value="20">
+                  </div>
+                  <div class="hint">Útil para que el texto se lea mejor sobre fotografías.</div>
+                </div>
+              </div>
+              <div class="mini-actions" style="margin-top:10px">
+                <button id="removeImageBtn" class="mini-btn" type="button">Quitar imagen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field full">
+          <div class="checks">
+            <label class="check"><input id="keepAwake" type="checkbox" checked> Mantener pantalla activa</label>
+            <label class="check"><input id="tryLandscape" type="checkbox" checked> Intentar horizontal</label>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title" style="margin-top:22px">Textos</h2>
+      <div id="lineEditors"></div>
+
+      <div class="saved-section">
+        <h2 class="section-title">Carteles guardados</h2>
+        <div class="subcard" style="margin-top:0">
+          <div class="save-bar">
+            <div class="field">
+              <label for="presetName">Nombre para guardar este cartel</label>
+              <input id="presetName" type="text" maxlength="50" placeholder="Ej.: Aeropuerto - García">
+            </div>
+            <button id="savePresetBtn" class="btn btn-secondary" type="button">Guardar cartel</button>
+          </div>
+
+          <div id="presetList" class="preset-list"></div>
+
+          <div class="sequence-box">
+            <div class="sequence-head">
+              <h3>Secuencia automática</h3>
+              <span id="sequenceCount" class="line-chip">0 seleccionados</span>
+            </div>
+            <div class="sequence-controls">
+              <div class="field">
+                <label for="sequenceSeconds">Tiempo de cada cartel</label>
+                <div class="range-row">
+                  <input id="sequenceSeconds" type="range" min="2" max="60" value="5">
+                  <input id="sequenceSecondsNum" type="number" min="2" max="60" value="5">
+                </div>
+              </div>
+              <div class="field">
+                <span class="group-title">Reproducción</span>
+                <div class="checks">
+                  <label class="check"><input id="sequenceLoop" type="checkbox" checked> Repetir continuamente</label>
+                </div>
+              </div>
+            </div>
+            <div class="hint">Marca “Secuencia” en los carteles guardados. Se reproducen en el orden en que los selecciones.</div>
+            <div class="actions" style="margin-top:12px">
+              <button id="startSequenceBtn" class="btn btn-primary" type="button">Iniciar secuencia</button>
+              <button id="clearSequenceBtn" class="btn btn-secondary" type="button">Vaciar selección</button>
+            </div>
+          </div>
+
+          <div id="presetStatus" class="status-line" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="showBtn" class="btn btn-primary" type="button">Mostrar cartel</button>
+        <button id="installBtn" class="btn btn-secondary hidden" type="button">Instalar PWA</button>
+        <button id="resetBtn" class="btn btn-secondary" type="button">Restablecer</button>
+      </div>
+
+      <p class="footer-note">
+        Puedes combinar efectos: por ejemplo, una misma línea puede desplazarse y parpadear al mismo tiempo.
+      </p>
+    </section>
+  </main>
+
+  <section id="displayView" class="hidden" aria-label="Cartel a pantalla completa">
+    <div id="poster">
+      <div id="posterOverlay"></div>
+      <div id="posterRows"></div>
+    </div>
+    <div class="display-controls">
+      <button id="sequencePauseBtn" class="display-btn hidden" type="button" aria-label="Pausar secuencia">⏸</button>
+      <button id="editBtn" class="display-btn" type="button" aria-label="Volver al editor">✕</button>
+    </div>
+    <div id="sequenceBadge" class="sequence-badge hidden"></div>
+    <div id="rotateTip" class="rotate-tip">Gira el móvil para verlo en horizontal</div>
+  </section>
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'cartelGo_v1_settings';
+  const THEME_KEY = 'cartelGo_v1_theme';
+  const DB_NAME = 'cartelGo_v1_db';
+  const DB_STORE = 'backgrounds';
+  const DB_IMAGE_KEY = 'selectedBackground';
+  const PRESET_STORE = 'presets';
+  const DB_VERSION = 2;
+  const SEQUENCE_KEY = 'cartelGo_v2_sequence';
+
+  const $ = id => document.getElementById(id);
+  const els = {
+    configView: $('configView'),
+    displayView: $('displayView'),
+    poster: $('poster'),
+    posterOverlay: $('posterOverlay'),
+    posterRows: $('posterRows'),
+    rotateTip: $('rotateTip'),
+    lineEditors: $('lineEditors'),
+    bgType: $('bgType'),
+    gradientDirection: $('gradientDirection'),
+    gradientDirectionField: $('gradientDirectionField'),
+    solidGradientColors: $('solidGradientColors'),
+    bgColor1: $('bgColor1'),
+    bgColor2: $('bgColor2'),
+    imageOptions: $('imageOptions'),
+    bgImageInput: $('bgImageInput'),
+    bgImagePreview: $('bgImagePreview'),
+    imageFit: $('imageFit'),
+    imagePosition: $('imagePosition'),
+    imageOverlay: $('imageOverlay'),
+    imageOverlayNum: $('imageOverlayNum'),
+    removeImageBtn: $('removeImageBtn'),
+    keepAwake: $('keepAwake'),
+    tryLandscape: $('tryLandscape'),
+    showBtn: $('showBtn'),
+    editBtn: $('editBtn'),
+    resetBtn: $('resetBtn'),
+    themeBtn: $('themeBtn'),
+    installBtn: $('installBtn'),
+    presetName: $('presetName'),
+    savePresetBtn: $('savePresetBtn'),
+    presetList: $('presetList'),
+    presetStatus: $('presetStatus'),
+    sequenceSeconds: $('sequenceSeconds'),
+    sequenceSecondsNum: $('sequenceSecondsNum'),
+    sequenceLoop: $('sequenceLoop'),
+    sequenceCount: $('sequenceCount'),
+    startSequenceBtn: $('startSequenceBtn'),
+    clearSequenceBtn: $('clearSequenceBtn'),
+    sequencePauseBtn: $('sequencePauseBtn'),
+    sequenceBadge: $('sequenceBadge')
+  };
+
+  const FONT_OPTIONS = [
+    ['Arial, Helvetica, sans-serif','Arial'],
+    ["Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif",'Impact'],
+    ['Verdana, Geneva, sans-serif','Verdana'],
+    ["'Trebuchet MS', Arial, sans-serif",'Trebuchet'],
+    ["Georgia, 'Times New Roman', serif",'Georgia'],
+    ["'Times New Roman', Times, serif",'Times New Roman'],
+    ["'Courier New', Courier, monospace",'Courier New'],
+    ['monospace','Monospace'],
+    ["'Comic Sans MS', 'Comic Sans', cursive",'Comic Sans']
+  ];
+
+  const defaultLine = (n) => ({
+    text:'',
+    fontFamily: FONT_OPTIONS[0][0],
+    color: n === 1 ? '#ffffff' : n === 2 ? '#fde047' : '#ffffff',
+    size: 120,
+    autoFit: true,
+    bold: true,
+    uppercase: false,
+    blink: false,
+    move: false,
+    direction: 'left',
+    pulse: false,
+    blinkSpeed: 5,
+    moveSpeed: 5,
+    pulseSpeed: 5,
+    outlineWidth: 0,
+    outlineColor: '#000000',
+    led: false
+  });
+
+  const defaults = {
+    bgType:'solid',
+    gradientDirection:'90deg',
+    bgColor1:'#000000',
+    bgColor2:'#172554',
+    imageFit:'cover',
+    imagePosition:'center',
+    imageOverlay:20,
+    hasImage:false,
+    keepAwake:true,
+    tryLandscape:true,
+    lines:[defaultLine(1),defaultLine(2),defaultLine(3)]
+  };
+
+  let deferredPrompt = null;
+  let wakeLock = null;
+  let controlsTimer = null;
+  let bgImageObjectUrl = null;
+  let imageBlob = null;
+  let currentRenderedSettings = null;
+  let displayImageObjectUrl = null;
+  let sequenceTimer = null;
+  let sequenceRecords = [];
+  let sequenceIndex = 0;
+  let sequenceActive = false;
+  let sequencePaused = false;
+
+  function escapeAttr(str){
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  }
+
+  function buildLineEditors(){
+    els.lineEditors.innerHTML = '';
+    for(let i=0;i<3;i++){
+      const n = i+1;
+      const details = document.createElement('details');
+      details.className = 'subcard';
+      if(n === 1) details.open = true;
+
+      const fontOptions = FONT_OPTIONS.map(([value,label]) =>
+        `<option value="${escapeAttr(value)}">${label}</option>`).join('');
+
+      details.innerHTML = `
+        <summary>
+          <span>Línea ${n}</span>
+          <span class="line-chip">${n === 1 ? 'principal' : 'opcional'}</span>
+        </summary>
+
+        <div class="subcard-body">
+          <div class="grid">
+            <div class="field full">
+              <label for="text${n}">Texto</label>
+              <input id="text${n}" data-line="${i}" data-key="text" type="text" maxlength="90"
+                     placeholder="${n===1 ? 'Ej.: VÍCTOR' : n===2 ? 'Ej.: TAXI' : 'Ej.: GRANADA'}">
+            </div>
+
+            <div class="field">
+              <label for="font${n}">Tipo de letra</label>
+              <select id="font${n}" data-line="${i}" data-key="fontFamily">${fontOptions}</select>
+            </div>
+
+            <div class="field">
+              <label for="size${n}">Tamaño</label>
+              <div class="range-row">
+                <input id="size${n}" data-line="${i}" data-key="size" type="range" min="24" max="300" value="120">
+                <input id="sizeNum${n}" data-line="${i}" data-key="size" data-number-for="size${n}" type="number" min="24" max="300" value="120">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="color${n}">Color de la fuente</label>
+              <label class="color-item" for="color${n}">
+                Texto
+                <input id="color${n}" data-line="${i}" data-key="color" type="color" value="#ffffff">
+              </label>
+            </div>
+
+            <div class="field">
+              <label for="outlineColor${n}">Contorno</label>
+              <div class="colors">
+                <label class="color-item" for="outlineColor${n}">
+                  Color
+                  <input id="outlineColor${n}" data-line="${i}" data-key="outlineColor" type="color" value="#000000">
+                </label>
+                <div>
+                  <div class="range-row">
+                    <input id="outlineWidth${n}" data-line="${i}" data-key="outlineWidth" type="range" min="0" max="10" value="0">
+                    <input id="outlineWidthNum${n}" data-line="${i}" data-key="outlineWidth" data-number-for="outlineWidth${n}" type="number" min="0" max="10" value="0">
+                  </div>
+                  <div class="hint">0 = sin contorno</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field full">
+              <span class="group-title">Estilo</span>
+              <div class="checks">
+                <label class="check"><input data-line="${i}" data-key="autoFit" type="checkbox" checked> Ajuste automático</label>
+                <label class="check"><input data-line="${i}" data-key="bold" type="checkbox" checked> Negrita</label>
+                <label class="check"><input data-line="${i}" data-key="uppercase" type="checkbox"> Mayúsculas</label>
+                <label class="check"><input data-line="${i}" data-key="led" type="checkbox"> Estilo LED</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <span class="group-title">Efectos combinables</span>
+              <div class="checks">
+                <label class="check"><input data-line="${i}" data-key="blink" type="checkbox"> Parpadeo</label>
+                <label class="check"><input data-line="${i}" data-key="move" type="checkbox"> Desplazamiento</label>
+                <label class="check"><input data-line="${i}" data-key="pulse" type="checkbox"> Pulso</label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="direction${n}">Dirección del desplazamiento</label>
+              <select id="direction${n}" data-line="${i}" data-key="direction">
+                <option value="left">Hacia la izquierda</option>
+                <option value="right">Hacia la derecha</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="moveSpeed${n}">Velocidad desplazamiento</label>
+              <div class="range-row">
+                <input id="moveSpeed${n}" data-line="${i}" data-key="moveSpeed" type="range" min="1" max="10" value="5">
+                <input id="moveSpeedNum${n}" data-line="${i}" data-key="moveSpeed" data-number-for="moveSpeed${n}" type="number" min="1" max="10" value="5">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="blinkSpeed${n}">Velocidad parpadeo</label>
+              <div class="range-row">
+                <input id="blinkSpeed${n}" data-line="${i}" data-key="blinkSpeed" type="range" min="1" max="10" value="5">
+                <input id="blinkSpeedNum${n}" data-line="${i}" data-key="blinkSpeed" data-number-for="blinkSpeed${n}" type="number" min="1" max="10" value="5">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="pulseSpeed${n}">Velocidad pulso</label>
+              <div class="range-row">
+                <input id="pulseSpeed${n}" data-line="${i}" data-key="pulseSpeed" type="range" min="1" max="10" value="5">
+                <input id="pulseSpeedNum${n}" data-line="${i}" data-key="pulseSpeed" data-number-for="pulseSpeed${n}" type="number" min="1" max="10" value="5">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      els.lineEditors.appendChild(details);
+    }
+    wireEditorEvents();
+  }
+
+  function getLineControls(index){
+    const root = els.lineEditors;
+    const q = key => root.querySelector(`[data-line="${index}"][data-key="${key}"]`);
+    return {
+      text:q('text'),
+      fontFamily:q('fontFamily'),
+      color:q('color'),
+      size:q('size'),
+      autoFit:q('autoFit'),
+      bold:q('bold'),
+      uppercase:q('uppercase'),
+      blink:q('blink'),
+      move:q('move'),
+      direction:q('direction'),
+      pulse:q('pulse'),
+      blinkSpeed:q('blinkSpeed'),
+      moveSpeed:q('moveSpeed'),
+      pulseSpeed:q('pulseSpeed'),
+      outlineWidth:q('outlineWidth'),
+      outlineColor:q('outlineColor'),
+      led:q('led')
+    };
+  }
+
+  function readLine(index){
+    const c = getLineControls(index);
+    return {
+      text:c.text.value.trim(),
+      fontFamily:c.fontFamily.value,
+      color:c.color.value,
+      size:Number(c.size.value),
+      autoFit:c.autoFit.checked,
+      bold:c.bold.checked,
+      uppercase:c.uppercase.checked,
+      blink:c.blink.checked,
+      move:c.move.checked,
+      direction:c.direction.value,
+      pulse:c.pulse.checked,
+      blinkSpeed:Number(c.blinkSpeed.value),
+      moveSpeed:Number(c.moveSpeed.value),
+      pulseSpeed:Number(c.pulseSpeed.value),
+      outlineWidth:Number(c.outlineWidth.value),
+      outlineColor:c.outlineColor.value,
+      led:c.led.checked
+    };
+  }
+
+  function getSettings(){
+    return {
+      bgType:els.bgType.value,
+      gradientDirection:els.gradientDirection.value,
+      bgColor1:els.bgColor1.value,
+      bgColor2:els.bgColor2.value,
+      imageFit:els.imageFit.value,
+      imagePosition:els.imagePosition.value,
+      imageOverlay:Number(els.imageOverlay.value),
+      hasImage:!!imageBlob,
+      keepAwake:els.keepAwake.checked,
+      tryLandscape:els.tryLandscape.checked,
+      lines:[0,1,2].map(readLine)
+    };
+  }
+
+  function setControlValue(el, value){
+    if(!el) return;
+    if(el.type === 'checkbox') el.checked = !!value;
+    else el.value = value;
+  }
+
+  function applySettings(s){
+    const v = {
+      ...defaults,
+      ...(s || {}),
+      lines:[0,1,2].map(i => ({...defaultLine(i+1), ...((s && s.lines && s.lines[i]) || {})}))
+    };
+
+    els.bgType.value = v.bgType;
+    els.gradientDirection.value = v.gradientDirection;
+    els.bgColor1.value = v.bgColor1;
+    els.bgColor2.value = v.bgColor2;
+    els.imageFit.value = v.imageFit;
+    els.imagePosition.value = v.imagePosition;
+    els.imageOverlay.value = v.imageOverlay;
+    els.imageOverlayNum.value = v.imageOverlay;
+    els.keepAwake.checked = !!v.keepAwake;
+    els.tryLandscape.checked = !!v.tryLandscape;
+
+    v.lines.forEach((line,i) => {
+      const c = getLineControls(i);
+      Object.entries(line).forEach(([key,val]) => setControlValue(c[key], val));
+
+      const n = i+1;
+      const pairs = [
+        [`sizeNum${n}`, line.size],
+        [`outlineWidthNum${n}`, line.outlineWidth],
+        [`moveSpeedNum${n}`, line.moveSpeed],
+        [`blinkSpeedNum${n}`, line.blinkSpeed],
+        [`pulseSpeedNum${n}`, line.pulseSpeed]
+      ];
+      pairs.forEach(([id,val]) => { const el=$(id); if(el) el.value=val; });
+    });
+
+    updateBackgroundUI();
+  }
+
+  function saveSettings(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(getSettings()));
+  }
+
+  function loadSettings(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      applySettings(raw ? JSON.parse(raw) : defaults);
+    }catch{
+      applySettings(defaults);
+    }
+  }
+
+  function setTheme(theme){
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+    els.themeBtn.textContent = theme === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
+    document.querySelector('meta[name="theme-color"]').setAttribute(
+      'content', theme === 'dark' ? '#0f172a' : '#f3f4f6'
+    );
+  }
+
+  function loadTheme(){
+    setTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  }
+
+  function updateBackgroundUI(){
+    const mode = els.bgType.value;
+    els.imageOptions.classList.toggle('hidden', mode !== 'image');
+    els.gradientDirectionField.classList.toggle('hidden', mode !== 'gradient');
+
+    if(mode === 'image'){
+      els.solidGradientColors.classList.add('hidden');
+    }else{
+      els.solidGradientColors.classList.remove('hidden');
+      els.bgColor2.closest('.color-item').style.opacity = mode === 'gradient' ? '1' : '.45';
+      els.bgColor2.disabled = mode !== 'gradient';
+    }
+  }
+
+  function wireEditorEvents(){
+    els.lineEditors.querySelectorAll('input,select').forEach(el => {
+      el.addEventListener('input', e => {
+        const target = e.target;
+
+        if(target.matches('input[type="range"][data-line]')){
+          const n = Number(target.dataset.line)+1;
+          const map = {
+            size:`sizeNum${n}`,
+            outlineWidth:`outlineWidthNum${n}`,
+            moveSpeed:`moveSpeedNum${n}`,
+            blinkSpeed:`blinkSpeedNum${n}`,
+            pulseSpeed:`pulseSpeedNum${n}`
+          };
+          const num = $(map[target.dataset.key]);
+          if(num) num.value = target.value;
+        }
+
+        if(target.dataset.numberFor){
+          const range = $(target.dataset.numberFor);
+          if(range){
+            let v = Number(target.value);
+            const min = Number(range.min);
+            const max = Number(range.max);
+            if(Number.isFinite(v)){
+              v = Math.max(min, Math.min(max, v));
+              range.value = v;
+            }
+          }
+        }
+        saveSettings();
+      });
+    });
+  }
+
+  function speedDuration(speed, kind){
+    const s = Math.max(1, Math.min(10, Number(speed)));
+    if(kind === 'blink') return (2.1 - (s * 0.15)).toFixed(2) + 's';
+    if(kind === 'pulse') return (2.6 - (s * 0.18)).toFixed(2) + 's';
+    return (11.5 - (s * 0.85)).toFixed(2) + 's';
+  }
+
+  function applyOutline(txt, line){
+    const w = Math.max(0, Number(line.outlineWidth || 0));
+    if(w <= 0){
+      txt.style.webkitTextStroke = '';
+      txt.style.paintOrder = '';
+      return;
+    }
+    txt.style.webkitTextStroke = `${w}px ${line.outlineColor}`;
+    txt.style.paintOrder = 'stroke fill';
+  }
+
+  function fitText(textEl, rowEl, requestedSize, autoFit, moving){
+    const target = Math.max(12, Number(requestedSize) || 120);
+    textEl.style.fontSize = target + 'px';
+
+    if(!autoFit) return;
+
+    const maxW = rowEl.clientWidth * 0.96;
+    const maxH = rowEl.clientHeight * 0.84;
+
+    if(moving){
+      let lo = 12, hi = 500, best = 12;
+      for(let i=0;i<14;i++){
+        const mid = (lo + hi) / 2;
+        textEl.style.fontSize = mid + 'px';
+        const rect = textEl.getBoundingClientRect();
+        if(rect.height <= maxH){
+          best = mid;
+          lo = mid;
+        }else hi = mid;
+      }
+      textEl.style.fontSize = Math.floor(best) + 'px';
+      return;
+    }
+
+    let lo = 12, hi = 500, best = 12;
+    for(let i=0;i<14;i++){
+      const mid = (lo + hi) / 2;
+      textEl.style.fontSize = mid + 'px';
+      const rect = textEl.getBoundingClientRect();
+      if(rect.width <= maxW && rect.height <= maxH){
+        best = mid;
+        lo = mid;
+      }else hi = mid;
+    }
+    textEl.style.fontSize = Math.floor(best) + 'px';
+  }
+
+  function clearDisplayImageObjectUrl(){
+    if(displayImageObjectUrl){
+      URL.revokeObjectURL(displayImageObjectUrl);
+      displayImageObjectUrl = null;
+    }
+  }
+
+  function applyPosterBackground(s, imageUrl = bgImageObjectUrl){
+    els.poster.style.backgroundImage = '';
+    els.poster.style.backgroundColor = '#000';
+    els.poster.style.backgroundPosition = 'center';
+    els.poster.style.backgroundRepeat = 'no-repeat';
+    els.poster.style.backgroundSize = 'cover';
+    els.posterOverlay.style.background = 'rgba(0,0,0,0)';
+
+    if(s.bgType === 'gradient'){
+      els.poster.style.backgroundImage = `linear-gradient(${s.gradientDirection}, ${s.bgColor1}, ${s.bgColor2})`;
+    }else if(s.bgType === 'image' && imageUrl){
+      els.poster.style.backgroundImage = `url("${imageUrl}")`;
+      els.poster.style.backgroundSize = s.imageFit;
+      els.poster.style.backgroundPosition = s.imagePosition;
+      els.posterOverlay.style.background = `rgba(0,0,0,${Math.max(0,Math.min(80,s.imageOverlay))/100})`;
+    }else{
+      els.poster.style.backgroundColor = s.bgColor1;
+    }
+  }
+
+  function renderPoster(s, imageUrl = null){
+    const active = s.lines
+      .map((line,index) => ({...line,index}))
+      .filter(line => line.text);
+
+    if(active.length === 0) return false;
+
+    currentRenderedSettings = s;
+    els.posterRows.innerHTML = '';
+    applyPosterBackground(s, imageUrl || bgImageObjectUrl);
+
+    active.forEach(line => {
+      const row = document.createElement('div');
+      row.className = 'poster-row';
+      row.dataset.sourceIndex = line.index;
+
+      const motion = document.createElement('div');
+      motion.className = 'motion-wrap';
+
+      const txt = document.createElement('div');
+      txt.className = 'poster-text';
+
+      let value = line.text;
+      if(line.uppercase) value = value.toUpperCase();
+      txt.textContent = value;
+      txt.style.color = line.color;
+      txt.style.fontFamily = line.fontFamily;
+      txt.style.fontWeight = line.bold ? '900' : '400';
+
+      if(line.led) txt.classList.add('led');
+      applyOutline(txt, line);
+
+      if(line.blink){
+        txt.classList.add('fx-blink');
+        txt.style.setProperty('--blink-speed', speedDuration(line.blinkSpeed, 'blink'));
+      }
+      if(line.pulse){
+        txt.classList.add('fx-pulse');
+        txt.style.setProperty('--pulse-speed', speedDuration(line.pulseSpeed, 'pulse'));
+      }
+      if(line.move){
+        motion.classList.add(line.direction === 'right' ? 'move-right' : 'move-left');
+        motion.style.setProperty('--scroll-speed', speedDuration(line.moveSpeed, 'scroll'));
+      }
+
+      motion.appendChild(txt);
+      row.appendChild(motion);
+      els.posterRows.appendChild(row);
+    });
+
+    requestAnimationFrame(() => refitPoster(s));
+    return true;
+  }
+
+  function buildPoster(){
+    const s = getSettings();
+    if(!renderPoster(s, bgImageObjectUrl)){
+      $('text1').focus();
+      return false;
+    }
+    return true;
+  }
+
+  function refitPoster(s = currentRenderedSettings || getSettings()){
+    [...els.posterRows.querySelectorAll('.poster-row')].forEach(row => {
+      const i = Number(row.dataset.sourceIndex);
+      const line = s.lines[i];
+      if(!line) return;
+      const txt = row.querySelector('.poster-text');
+      fitText(txt, row, line.size, line.autoFit, !!line.move);
+    });
+  }
+
+  /* IndexedDB para guardar la imagen sin depender del límite de localStorage */
+  function openDB(){
+    return new Promise((resolve,reject) => {
+      const req = indexedDB.open(DB_NAME,DB_VERSION);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if(!db.objectStoreNames.contains(DB_STORE)){
+          db.createObjectStore(DB_STORE);
+        }
+        if(!db.objectStoreNames.contains(PRESET_STORE)){
+          db.createObjectStore(PRESET_STORE,{keyPath:'id'});
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function putPreset(record){
+    const db = await openDB();
+    try{
+      await new Promise((resolve,reject) => {
+        const tx = db.transaction(PRESET_STORE,'readwrite');
+        tx.objectStore(PRESET_STORE).put(record);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    }finally{ db.close(); }
+  }
+
+  async function getPreset(id){
+    const db = await openDB();
+    try{
+      return await new Promise((resolve,reject) => {
+        const tx = db.transaction(PRESET_STORE,'readonly');
+        const req = tx.objectStore(PRESET_STORE).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    }finally{ db.close(); }
+  }
+
+  async function getAllPresets(){
+    const db = await openDB();
+    try{
+      const rows = await new Promise((resolve,reject) => {
+        const tx = db.transaction(PRESET_STORE,'readonly');
+        const req = tx.objectStore(PRESET_STORE).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+      return rows.sort((a,b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    }finally{ db.close(); }
+  }
+
+  async function removePreset(id){
+    const db = await openDB();
+    try{
+      await new Promise((resolve,reject) => {
+        const tx = db.transaction(PRESET_STORE,'readwrite');
+        tx.objectStore(PRESET_STORE).delete(id);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    }finally{ db.close(); }
+  }
+
+  async function saveImageBlob(blob){
+    try{
+      const db = await openDB();
+      await new Promise((resolve,reject) => {
+        const tx = db.transaction(DB_STORE,'readwrite');
+        tx.objectStore(DB_STORE).put(blob,DB_IMAGE_KEY);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+      db.close();
+    }catch{}
+  }
+
+  async function loadImageBlob(){
+    try{
+      const db = await openDB();
+      const blob = await new Promise((resolve,reject) => {
+        const tx = db.transaction(DB_STORE,'readonly');
+        const req = tx.objectStore(DB_STORE).get(DB_IMAGE_KEY);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+      db.close();
+      return blob;
+    }catch{
+      return null;
+    }
+  }
+
+  async function deleteImageBlob(){
+    try{
+      const db = await openDB();
+      await new Promise((resolve,reject) => {
+        const tx = db.transaction(DB_STORE,'readwrite');
+        tx.objectStore(DB_STORE).delete(DB_IMAGE_KEY);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+      db.close();
+    }catch{}
+  }
+
+  function setBackgroundImageBlob(blob){
+    if(bgImageObjectUrl){
+      URL.revokeObjectURL(bgImageObjectUrl);
+      bgImageObjectUrl = null;
+    }
+    imageBlob = blob || null;
+
+    if(blob){
+      bgImageObjectUrl = URL.createObjectURL(blob);
+      els.bgImagePreview.src = bgImageObjectUrl;
+      els.bgImagePreview.classList.remove('hidden');
+    }else{
+      els.bgImagePreview.removeAttribute('src');
+      els.bgImagePreview.classList.add('hidden');
+    }
+  }
+
+  async function restoreSavedImage(){
+    const blob = await loadImageBlob();
+    if(blob) setBackgroundImageBlob(blob);
+    saveSettings();
+  }
+
+  function makeId(){
+    if(crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return 'preset-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  }
+
+  function getSequencePrefs(){
+    try{
+      const raw = localStorage.getItem(SEQUENCE_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      return {
+        selectedIds:Array.isArray(data.selectedIds) ? data.selectedIds : [],
+        seconds:Math.max(2,Math.min(60,Number(data.seconds) || 5)),
+        loop:data.loop !== false
+      };
+    }catch{
+      return {selectedIds:[],seconds:5,loop:true};
+    }
+  }
+
+  function saveSequencePrefs(prefs){
+    localStorage.setItem(SEQUENCE_KEY, JSON.stringify(prefs));
+    updateSequenceCount(prefs.selectedIds.length);
+  }
+
+  function updateSequenceCount(count){
+    els.sequenceCount.textContent = `${count} ${count === 1 ? 'seleccionado' : 'seleccionados'}`;
+  }
+
+  function setPresetStatus(message){
+    els.presetStatus.textContent = message || '';
+  }
+
+  function presetSummary(record){
+    const texts = (record.settings?.lines || []).map(x => x.text).filter(Boolean);
+    return texts.length ? texts.join(' · ') : 'Sin texto';
+  }
+
+  async function saveCurrentPreset(){
+    const settings = getSettings();
+    const hasText = settings.lines.some(line => line.text);
+    if(!hasText){
+      setPresetStatus('Escribe al menos una línea antes de guardar.');
+      return;
+    }
+
+    const fallback = settings.lines.find(line => line.text)?.text || 'Cartel';
+    const name = (els.presetName.value.trim() || fallback).slice(0,50);
+    const now = Date.now();
+    const record = {
+      id:makeId(),
+      name,
+      createdAt:now,
+      updatedAt:now,
+      settings,
+      imageBlob:(settings.bgType === 'image' && imageBlob) ? imageBlob : null
+    };
+
+    try{
+      await putPreset(record);
+      els.presetName.value = '';
+      setPresetStatus(`“${name}” guardado.`);
+      await renderPresetList();
+    }catch{
+      setPresetStatus('No se pudo guardar el cartel en este dispositivo.');
+    }
+  }
+
+  async function loadPresetIntoEditor(id){
+    const record = await getPreset(id);
+    if(!record) return;
+
+    applySettings(record.settings);
+    setBackgroundImageBlob(record.imageBlob || null);
+    els.bgImageInput.value = '';
+
+    if(record.imageBlob) await saveImageBlob(record.imageBlob);
+    else await deleteImageBlob();
+
+    saveSettings();
+    setPresetStatus(`“${record.name}” cargado en el editor.`);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  async function showSavedPreset(id){
+    const record = await getPreset(id);
+    if(!record) return;
+
+    stopSequencePlayback();
+    clearDisplayImageObjectUrl();
+    if(record.imageBlob) displayImageObjectUrl = URL.createObjectURL(record.imageBlob);
+    if(!renderPoster(record.settings, displayImageObjectUrl)) return;
+    els.sequenceBadge.textContent = record.name;
+    els.sequenceBadge.classList.remove('hidden');
+    await enterDisplayMode();
+  }
+
+  async function deletePreset(id){
+    const record = await getPreset(id);
+    await removePreset(id);
+    const prefs = getSequencePrefs();
+    prefs.selectedIds = prefs.selectedIds.filter(x => x !== id);
+    saveSequencePrefs(prefs);
+    setPresetStatus(record ? `“${record.name}” eliminado.` : 'Cartel eliminado.');
+    await renderPresetList();
+  }
+
+  function togglePresetInSequence(id, checked){
+    const prefs = getSequencePrefs();
+    if(checked){
+      if(!prefs.selectedIds.includes(id)) prefs.selectedIds.push(id);
+    }else{
+      prefs.selectedIds = prefs.selectedIds.filter(x => x !== id);
+    }
+    saveSequencePrefs(prefs);
+    renderPresetList();
+  }
+
+  async function renderPresetList(){
+    let presets = [];
+    try{ presets = await getAllPresets(); }catch{}
+    const prefs = getSequencePrefs();
+    const existingIds = new Set(presets.map(p => p.id));
+    const cleaned = prefs.selectedIds.filter(id => existingIds.has(id));
+    if(cleaned.length !== prefs.selectedIds.length){
+      prefs.selectedIds = cleaned;
+      saveSequencePrefs(prefs);
+    }
+
+    updateSequenceCount(prefs.selectedIds.length);
+    els.presetList.innerHTML = '';
+
+    if(!presets.length){
+      const empty = document.createElement('div');
+      empty.className = 'preset-empty';
+      empty.textContent = 'Todavía no hay carteles guardados.';
+      els.presetList.appendChild(empty);
+      return;
+    }
+
+    presets.forEach(record => {
+      const item = document.createElement('div');
+      item.className = 'preset-item';
+
+      const info = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'preset-title';
+      title.textContent = record.name;
+      const meta = document.createElement('div');
+      meta.className = 'preset-meta';
+      meta.textContent = presetSummary(record);
+      const seqLabel = document.createElement('label');
+      seqLabel.className = 'preset-seq';
+      const check = document.createElement('input');
+      check.type = 'checkbox';
+      check.checked = prefs.selectedIds.includes(record.id);
+      check.addEventListener('change', () => togglePresetInSequence(record.id, check.checked));
+      const seqText = document.createElement('span');
+      const pos = prefs.selectedIds.indexOf(record.id);
+      seqText.textContent = pos >= 0 ? `Secuencia · ${pos+1}º` : 'Secuencia';
+      seqLabel.append(check,seqText);
+      info.append(title,meta,seqLabel);
+
+      const actions = document.createElement('div');
+      actions.className = 'preset-actions';
+      const loadBtn = document.createElement('button');
+      loadBtn.className = 'mini-btn';
+      loadBtn.type = 'button';
+      loadBtn.textContent = 'Cargar';
+      loadBtn.addEventListener('click', () => loadPresetIntoEditor(record.id));
+      const showBtn = document.createElement('button');
+      showBtn.className = 'mini-btn';
+      showBtn.type = 'button';
+      showBtn.textContent = 'Ver';
+      showBtn.addEventListener('click', () => showSavedPreset(record.id));
+      const delBtn = document.createElement('button');
+      delBtn.className = 'mini-btn';
+      delBtn.type = 'button';
+      delBtn.textContent = 'Borrar';
+      delBtn.addEventListener('click', () => deletePreset(record.id));
+      actions.append(loadBtn,showBtn,delBtn);
+
+      item.append(info,actions);
+      els.presetList.appendChild(item);
+    });
+  }
+
+  function syncSequenceControlsFromStorage(){
+    const prefs = getSequencePrefs();
+    els.sequenceSeconds.value = prefs.seconds;
+    els.sequenceSecondsNum.value = prefs.seconds;
+    els.sequenceLoop.checked = prefs.loop;
+    updateSequenceCount(prefs.selectedIds.length);
+  }
+
+  function saveSequenceControls(){
+    const prefs = getSequencePrefs();
+    prefs.seconds = Math.max(2,Math.min(60,Number(els.sequenceSeconds.value) || 5));
+    prefs.loop = els.sequenceLoop.checked;
+    saveSequencePrefs(prefs);
+  }
+
+  function stopSequencePlayback(){
+    clearTimeout(sequenceTimer);
+    sequenceTimer = null;
+    sequenceRecords = [];
+    sequenceIndex = 0;
+    sequenceActive = false;
+    sequencePaused = false;
+    els.sequencePauseBtn.classList.add('hidden');
+    els.sequencePauseBtn.textContent = '⏸';
+    els.sequencePauseBtn.setAttribute('aria-label','Pausar secuencia');
+  }
+
+  async function renderSequenceItem(){
+    if(!sequenceRecords.length) return;
+    const record = sequenceRecords[sequenceIndex];
+    clearDisplayImageObjectUrl();
+    if(record.imageBlob) displayImageObjectUrl = URL.createObjectURL(record.imageBlob);
+    renderPoster(record.settings,displayImageObjectUrl);
+    els.sequenceBadge.textContent = `${sequenceIndex+1}/${sequenceRecords.length} · ${record.name}`;
+    els.sequenceBadge.classList.remove('hidden');
+  }
+
+  function scheduleNextSequenceItem(){
+    clearTimeout(sequenceTimer);
+    if(!sequenceActive || sequencePaused) return;
+    const prefs = getSequencePrefs();
+    sequenceTimer = setTimeout(async () => {
+      if(!sequenceActive || sequencePaused) return;
+      if(sequenceIndex < sequenceRecords.length - 1){
+        sequenceIndex += 1;
+      }else if(prefs.loop){
+        sequenceIndex = 0;
+      }else{
+        sequenceActive = false;
+        els.sequencePauseBtn.classList.add('hidden');
+        const last = sequenceRecords[sequenceRecords.length-1];
+        els.sequenceBadge.textContent = `Fin · ${last.name}`;
+        return;
+      }
+      await renderSequenceItem();
+      scheduleNextSequenceItem();
+    }, prefs.seconds * 1000);
+  }
+
+  async function startSequence(){
+    const prefs = getSequencePrefs();
+    if(!prefs.selectedIds.length){
+      setPresetStatus('Selecciona al menos un cartel para la secuencia.');
+      return;
+    }
+
+    const records = (await Promise.all(prefs.selectedIds.map(id => getPreset(id)))).filter(Boolean);
+    if(!records.length){
+      setPresetStatus('No hay carteles disponibles para reproducir.');
+      return;
+    }
+
+    clearDisplayImageObjectUrl();
+    stopSequencePlayback();
+    sequenceRecords = records;
+    sequenceIndex = 0;
+    sequenceActive = true;
+    sequencePaused = false;
+    els.sequencePauseBtn.classList.remove('hidden');
+    await renderSequenceItem();
+    await enterDisplayMode();
+    scheduleNextSequenceItem();
+  }
+
+  function toggleSequencePause(){
+    if(!sequenceRecords.length) return;
+    sequencePaused = !sequencePaused;
+    if(sequencePaused){
+      clearTimeout(sequenceTimer);
+      sequenceTimer = null;
+      els.sequencePauseBtn.textContent = '▶';
+      els.sequencePauseBtn.setAttribute('aria-label','Reanudar secuencia');
+      els.sequenceBadge.textContent = `Pausa · ${sequenceRecords[sequenceIndex].name}`;
+    }else{
+      els.sequencePauseBtn.textContent = '⏸';
+      els.sequencePauseBtn.setAttribute('aria-label','Pausar secuencia');
+      els.sequenceBadge.textContent = `${sequenceIndex+1}/${sequenceRecords.length} · ${sequenceRecords[sequenceIndex].name}`;
+      scheduleNextSequenceItem();
+    }
+  }
+
+  async function enterDisplayMode(){
+    els.configView.classList.add('hidden');
+    els.displayView.classList.remove('hidden');
+    els.displayView.classList.remove('controls-visible');
+    updateRotateTip();
+    await requestFullscreen();
+    await lockLandscape();
+    await requestWakeLock();
+    setTimeout(() => refitPoster(currentRenderedSettings),160);
+  }
+
+  async function requestFullscreen(){
+    const el = els.displayView;
+    try{
+      if(el.requestFullscreen) await el.requestFullscreen({navigationUI:'hide'});
+      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    }catch{}
+  }
+
+  async function exitFullscreen(){
+    try{
+      if(document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
+      else if(document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }catch{}
+  }
+
+  async function lockLandscape(){
+    if(!els.tryLandscape.checked) return;
+    try{
+      if(screen.orientation && screen.orientation.lock){
+        await screen.orientation.lock('landscape');
+      }
+    }catch{}
+  }
+
+  async function unlockOrientation(){
+    try{
+      if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+    }catch{}
+  }
+
+  async function requestWakeLock(){
+    if(!els.keepAwake.checked || !('wakeLock' in navigator)) return;
+    try{
+      wakeLock = await navigator.wakeLock.request('screen');
+    }catch{}
+  }
+
+  async function releaseWakeLock(){
+    try{
+      if(wakeLock) await wakeLock.release();
+    }catch{}
+    wakeLock = null;
+  }
+
+  function updateRotateTip(){
+    const portrait = window.matchMedia('(orientation: portrait)').matches;
+    els.rotateTip.classList.toggle('show', portrait);
+  }
+
+  async function showPoster(){
+    saveSettings();
+    stopSequencePlayback();
+    clearDisplayImageObjectUrl();
+    els.sequenceBadge.classList.add('hidden');
+    if(!buildPoster()) return;
+    await enterDisplayMode();
+  }
+
+  async function hidePoster(){
+    stopSequencePlayback();
+    clearDisplayImageObjectUrl();
+    els.sequenceBadge.classList.add('hidden');
+    await releaseWakeLock();
+    await unlockOrientation();
+    await exitFullscreen();
+    els.displayView.classList.add('hidden');
+    els.configView.classList.remove('hidden');
+  }
+
+  function showControlsBriefly(){
+    els.displayView.classList.add('controls-visible');
+    clearTimeout(controlsTimer);
+    controlsTimer = setTimeout(() => {
+      els.displayView.classList.remove('controls-visible');
+    }, 2500);
+  }
+
+  buildLineEditors();
+  loadTheme();
+  loadSettings();
+  syncSequenceControlsFromStorage();
+  restoreSavedImage();
+  renderPresetList();
+
+  els.showBtn.addEventListener('click', showPoster);
+  els.savePresetBtn.addEventListener('click', saveCurrentPreset);
+  els.startSequenceBtn.addEventListener('click', startSequence);
+  els.sequencePauseBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleSequencePause();
+  });
+  els.clearSequenceBtn.addEventListener('click', () => {
+    const prefs = getSequencePrefs();
+    prefs.selectedIds = [];
+    saveSequencePrefs(prefs);
+    renderPresetList();
+    setPresetStatus('Selección de secuencia vaciada.');
+  });
+  els.sequenceSeconds.addEventListener('input', () => {
+    els.sequenceSecondsNum.value = els.sequenceSeconds.value;
+    saveSequenceControls();
+  });
+  els.sequenceSecondsNum.addEventListener('input', () => {
+    let v = Number(els.sequenceSecondsNum.value);
+    if(Number.isFinite(v)){
+      v = Math.max(2,Math.min(60,v));
+      els.sequenceSeconds.value = v;
+      saveSequenceControls();
+    }
+  });
+  els.sequenceLoop.addEventListener('input', saveSequenceControls);
+  els.editBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    hidePoster();
+  });
+  els.displayView.addEventListener('click', showControlsBriefly);
+
+  els.themeBtn.addEventListener('click', () => {
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  els.bgType.addEventListener('input', () => {
+    updateBackgroundUI();
+    saveSettings();
+  });
+
+  [els.gradientDirection,els.bgColor1,els.bgColor2,els.imageFit,els.imagePosition,els.keepAwake,els.tryLandscape].forEach(el => {
+    el.addEventListener('input', saveSettings);
+  });
+
+  els.imageOverlay.addEventListener('input', () => {
+    els.imageOverlayNum.value = els.imageOverlay.value;
+    saveSettings();
+  });
+  els.imageOverlayNum.addEventListener('input', () => {
+    let v = Number(els.imageOverlayNum.value);
+    if(Number.isFinite(v)){
+      v = Math.max(0,Math.min(80,v));
+      els.imageOverlay.value = v;
+      saveSettings();
+    }
+  });
+
+  els.bgImageInput.addEventListener('change', async () => {
+    const file = els.bgImageInput.files && els.bgImageInput.files[0];
+    if(!file || !file.type.startsWith('image/')) return;
+    setBackgroundImageBlob(file);
+    await saveImageBlob(file);
+    els.bgType.value = 'image';
+    updateBackgroundUI();
+    saveSettings();
+  });
+
+  els.removeImageBtn.addEventListener('click', async () => {
+    setBackgroundImageBlob(null);
+    els.bgImageInput.value = '';
+    await deleteImageBlob();
+    if(els.bgType.value === 'image'){
+      els.bgType.value = 'solid';
+      updateBackgroundUI();
+    }
+    saveSettings();
+  });
+
+  els.resetBtn.addEventListener('click', async () => {
+    applySettings(defaults);
+    setBackgroundImageBlob(null);
+    els.bgImageInput.value = '';
+    await deleteImageBlob();
+    saveSettings();
+  });
+
+  window.addEventListener('resize', () => {
+    if(!els.displayView.classList.contains('hidden')){
+      updateRotateTip();
+      refitPoster();
+    }
+  });
+
+  document.addEventListener('visibilitychange', async () => {
+    if(document.visibilityState === 'visible' &&
+       !els.displayView.classList.contains('hidden') &&
+       els.keepAwake.checked){
+      await requestWakeLock();
+    }
+  });
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    els.installBtn.classList.remove('hidden');
+  });
+
+  els.installBtn.addEventListener('click', async () => {
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    try{ await deferredPrompt.userChoice; }catch{}
+    deferredPrompt = null;
+    els.installBtn.classList.add('hidden');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    els.installBtn.classList.add('hidden');
+  });
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
+    });
+  }
+})();
+</script>
+</body>
+</html>
