@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cartelgo-pwa-v4-20260923';
+const CACHE_NAME = 'cartelgo-pwa-v4-20260923b';
 const ASSETS = [
   './',
   './index.html',
