@@ -9,16 +9,16 @@
   <meta property="og:title" content="CartelGo">
   <meta property="og:description" content="Crea carteles a pantalla completa desde el móvil con textos, fondos, efectos, guardados y secuencias.">
   <meta property="og:url" content="https://victorisacc.github.io/CartelGo/">
-  <meta property="og:image" content="https://victorisacc.github.io/CartelGo/social-preview.jpg">
-  <meta property="og:image:secure_url" content="https://victorisacc.github.io/CartelGo/social-preview.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image" content="https://victorisacc.github.io/CartelGo/icon-maskable-512.png">
+  <meta property="og:image:secure_url" content="https://victorisacc.github.io/CartelGo/icon-maskable-512.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
   <meta property="og:image:alt" content="CartelGo, PWA para crear carteles a pantalla completa desde el móvil">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="CartelGo">
   <meta name="twitter:description" content="Crea carteles a pantalla completa desde el móvil con textos, fondos, efectos, guardados y secuencias.">
-  <meta name="twitter:image" content="https://victorisacc.github.io/CartelGo/social-preview.jpg">
+  <meta name="twitter:image" content="https://victorisacc.github.io/CartelGo/icon-maskable-512.png">
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -70,7 +70,11 @@
     .app{
       width:min(980px,100%);
       margin:0 auto;
-      padding:16px;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
     }
     .topbar{
       display:flex;
@@ -653,7 +657,13 @@
     }
 
     @media(max-width:700px){
-      .app{padding:12px}
+      .app{
+        padding:
+          max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(12px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+      }
       .grid{grid-template-columns:1fr}
       .full{grid-column:auto}
       .card{padding:14px;border-radius:16px}
@@ -775,7 +785,7 @@
               <label class="check"><input id="keepAwake" type="checkbox" checked> Mantener pantalla activa</label>
               <label class="check"><input id="tryLandscape" type="checkbox" checked> Orientación horizontal al mostrar</label>
             </div>
-            <div class="hint">Para que el giro automático a horizontal sea más fiable en el móvil, se recomienda instalar CartelGo como PWA. Desde el navegador algunos dispositivos pueden exigir girar el teléfono manualmente.</div>
+            <div class="hint">Para aprovechar mejor el modo horizontal y la pantalla completa, se recomienda instalar CartelGo como PWA. En Android, la versión instalada puede ocultar la barra de estado y navegación; desde el navegador estas funciones pueden estar limitadas.</div>
           </div>
         </div>
 
@@ -864,7 +874,7 @@
           <article class="instruction-card">
             <div class="instruction-icon">📱</div>
             <h3>4. Orientación horizontal</h3>
-            <p>CartelGo intenta cambiar automáticamente a horizontal al mostrar un cartel o una secuencia. Para que este bloqueo sea más fiable, se recomienda instalar la PWA. Si se usa directamente desde el navegador y el sistema no permite el giro automático, bastará con girar el teléfono manualmente.</p>
+            <p>CartelGo intenta cambiar automáticamente a horizontal al mostrar un cartel o una secuencia. Para que este bloqueo sea más fiable, se recomienda instalar la PWA. En Android, la versión instalada además puede abrir en modo pantalla completa, ocultando la barra de estado y la barra de navegación cuando el navegador y el dispositivo lo permiten. Si se usa directamente desde el navegador, estas funciones pueden estar limitadas y puede ser necesario girar el teléfono manualmente.</p>
             <div class="mini-diagram">Instalada → horizontal automático cuando el dispositivo lo permite</div>
           </article>
 

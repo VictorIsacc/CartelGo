@@ -1,9 +1,11 @@
-const CACHE_NAME = 'cartelgo-pwa-v4-4-20260923';
+const CACHE_NAME = 'cartelgo-pwa-v4-6-20260923';
 const ASSETS = [
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png',
   './apple-touch-icon.png',
   './favicon-64.png',
   './social-preview.jpg',
