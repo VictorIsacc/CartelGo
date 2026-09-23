@@ -1,11 +1,13 @@
-const CACHE_NAME = 'cartelgo-pwa-v4-20260923c';
+const CACHE_NAME = 'cartelgo-pwa-v4-4-20260923';
 const ASSETS = [
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './favicon-64.png'
+  './favicon-64.png',
+  './social-preview.jpg',
+  './social-preview.png'
 ];
 
 self.addEventListener('install', event => {

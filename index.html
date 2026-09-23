@@ -773,8 +773,9 @@
           <div class="field full">
             <div class="checks">
               <label class="check"><input id="keepAwake" type="checkbox" checked> Mantener pantalla activa</label>
-              <label class="check"><input id="tryLandscape" type="checkbox" checked> Intentar horizontal</label>
+              <label class="check"><input id="tryLandscape" type="checkbox" checked> Orientación horizontal al mostrar</label>
             </div>
+            <div class="hint">Para que el giro automático a horizontal sea más fiable en el móvil, se recomienda instalar CartelGo como PWA. Desde el navegador algunos dispositivos pueden exigir girar el teléfono manualmente.</div>
           </div>
         </div>
 
@@ -861,22 +862,29 @@
           </article>
 
           <article class="instruction-card">
+            <div class="instruction-icon">📱</div>
+            <h3>4. Orientación horizontal</h3>
+            <p>CartelGo intenta cambiar automáticamente a horizontal al mostrar un cartel o una secuencia. Para que este bloqueo sea más fiable, se recomienda instalar la PWA. Si se usa directamente desde el navegador y el sistema no permite el giro automático, bastará con girar el teléfono manualmente.</p>
+            <div class="mini-diagram">Instalada → horizontal automático cuando el dispositivo lo permite</div>
+          </article>
+
+          <article class="instruction-card">
             <div class="instruction-icon">📺</div>
-            <h3>4. Muestra el cartel</h3>
+            <h3>5. Muestra el cartel</h3>
             <p>El botón “Mostrar cartel” está siempre debajo de las cuatro pestañas. CartelGo cubre la zona visible de la PWA sin activar el fullscreen nativo del navegador.</p>
             <div class="mini-diagram">Mostrar cartel → ✕ para volver</div>
           </article>
 
           <article class="instruction-card">
             <div class="instruction-icon">💾</div>
-            <h3>5. Guarda tus carteles</h3>
+            <h3>6. Guarda tus carteles</h3>
             <p>En Guardados, pon un nombre y pulsa “Guardar cartel”. También se conserva la imagen de fondo si la configuración la utiliza.</p>
             <div class="mini-diagram">Cargar = editar · Ver = mostrar · Borrar = eliminar</div>
           </article>
 
           <article class="instruction-card">
             <div class="instruction-icon">🔁</div>
-            <h3>6. Crea una secuencia</h3>
+            <h3>7. Crea una secuencia</h3>
             <p>En Guardados marca “Secuencia” en varios carteles y define el tiempo y la repetición. Después usa “Iniciar secuencia”, siempre visible debajo de las pestañas.</p>
             <div class="mini-diagram">Cartel A → Cartel B → Cartel C → repetir</div>
           </article>
@@ -1903,24 +1911,81 @@
     }
   }
 
+  function isPortrait(){
+    return window.matchMedia('(orientation: portrait)').matches;
+  }
+
+  function isInstalledPWA(){
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           navigator.standalone === true;
+  }
+
+  async function waitForLandscape(timeoutMs = 900){
+    if(!isPortrait()) return true;
+
+    return await new Promise(resolve => {
+      let finished = false;
+
+      const done = value => {
+        if(finished) return;
+        finished = true;
+        window.removeEventListener('resize', onChange);
+        if(screen.orientation && screen.orientation.removeEventListener){
+          screen.orientation.removeEventListener('change', onChange);
+        }
+        resolve(value);
+      };
+
+      const onChange = () => {
+        if(!isPortrait()) done(true);
+      };
+
+      window.addEventListener('resize', onChange);
+      if(screen.orientation && screen.orientation.addEventListener){
+        screen.orientation.addEventListener('change', onChange);
+      }
+
+      setTimeout(() => done(!isPortrait()), timeoutMs);
+    });
+  }
+
   async function enterDisplayMode(){
     els.configView.classList.add('hidden');
     els.displayView.classList.remove('hidden');
     els.displayView.classList.remove('controls-visible');
+
+    const lockResult = await lockLandscape();
+
+    if(lockResult.requested){
+      await waitForLandscape(isInstalledPWA() ? 1100 : 650);
+    }
+
     updateRotateTip();
-    await lockLandscape();
     await requestWakeLock();
     setTimeout(() => refitPoster(currentRenderedSettings),160);
   }
 
 
   async function lockLandscape(){
-    if(!els.tryLandscape.checked) return;
-    try{
-      if(screen.orientation && screen.orientation.lock){
-        await screen.orientation.lock('landscape');
-      }
-    }catch{}
+    if(!els.tryLandscape.checked){
+      return {requested:false, locked:false};
+    }
+
+    if(!(screen.orientation && screen.orientation.lock)){
+      return {requested:true, locked:false};
+    }
+
+    const modes = ['landscape-primary','landscape'];
+
+    for(const mode of modes){
+      try{
+        await screen.orientation.lock(mode);
+        return {requested:true, locked:true};
+      }catch{}
+    }
+
+    return {requested:true, locked:false};
   }
 
   async function unlockOrientation(){
@@ -1944,8 +2009,9 @@
   }
 
   function updateRotateTip(){
-    const portrait = window.matchMedia('(orientation: portrait)').matches;
-    els.rotateTip.classList.toggle('show', portrait);
+    const displayVisible = !els.displayView.classList.contains('hidden');
+    const shouldShow = displayVisible && els.tryLandscape.checked && isPortrait();
+    els.rotateTip.classList.toggle('show', shouldShow);
   }
 
   async function showPoster(){
@@ -2083,9 +2149,14 @@
 
   document.addEventListener('visibilitychange', async () => {
     if(document.visibilityState === 'visible' &&
-       !els.displayView.classList.contains('hidden') &&
-       els.keepAwake.checked){
-      await requestWakeLock();
+       !els.displayView.classList.contains('hidden')){
+      if(els.tryLandscape.checked){
+        await lockLandscape();
+        setTimeout(updateRotateTip,300);
+      }
+      if(els.keepAwake.checked){
+        await requestWakeLock();
+      }
     }
   });
 
