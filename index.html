@@ -534,6 +534,107 @@
     }
     .rotate-tip.show{opacity:.92}
 
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:7px;
+      margin-bottom:14px;
+      padding:5px;
+      border:1px solid var(--ui-border);
+      border-radius:16px;
+      background:var(--ui-card-2);
+      position:sticky;
+      top:6px;
+      z-index:20;
+      box-shadow:0 8px 22px rgba(0,0,0,.08);
+    }
+    .tab-btn{
+      border:0;
+      border-radius:12px;
+      min-height:44px;
+      padding:9px 8px;
+      background:transparent;
+      color:var(--ui-muted);
+      font-weight:900;
+    }
+    .tab-btn.active{
+      background:var(--ui-accent);
+      color:var(--ui-accent-text);
+      box-shadow:0 5px 14px rgba(37,99,235,.22);
+    }
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .main-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:0 0 16px;
+    }
+    .main-actions .btn{
+      min-height:48px;
+      margin:0;
+    }
+    .main-actions .btn-primary{min-width:0}
+    .panel-intro{
+      margin:0 0 14px;
+      color:var(--ui-muted);
+      font-size:.9rem;
+      line-height:1.45;
+    }
+    .compact-heading{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin:3px 0 10px;
+    }
+    .compact-heading h2{margin:0;font-size:1.05rem}
+    .instruction-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .instruction-card{
+      border:1px solid var(--ui-border);
+      background:var(--ui-card-2);
+      border-radius:16px;
+      padding:14px;
+      min-height:150px;
+    }
+    .instruction-icon{
+      width:48px;
+      height:48px;
+      display:grid;
+      place-items:center;
+      border-radius:14px;
+      background:var(--ui-bg);
+      border:1px solid var(--ui-border);
+      font-size:1.55rem;
+      margin-bottom:10px;
+    }
+    .instruction-card h3{margin:0 0 7px;font-size:1rem}
+    .instruction-card p{margin:0;color:var(--ui-muted);line-height:1.45;font-size:.9rem}
+    .mini-diagram{
+      margin-top:10px;
+      padding:9px;
+      border:1px dashed var(--ui-border);
+      border-radius:12px;
+      color:var(--ui-text);
+      font-size:.83rem;
+      line-height:1.4;
+      background:var(--ui-card);
+    }
+    .help-note{
+      margin-top:14px;
+      padding:12px 13px;
+      border-radius:14px;
+      border:1px solid var(--ui-border);
+      background:var(--ui-card-2);
+      color:var(--ui-muted);
+      line-height:1.45;
+      font-size:.88rem;
+    }
+
     @media(max-width:700px){
       .app{padding:12px}
       .grid{grid-template-columns:1fr}
@@ -544,6 +645,11 @@
       .colors{grid-template-columns:1fr}
       .image-preview-wrap{grid-template-columns:1fr}
       .image-preview{max-width:280px}
+      .instruction-grid{grid-template-columns:1fr}
+      .tabs{top:4px;grid-template-columns:repeat(2,1fr)}
+      .tab-btn{font-size:.86rem}
+      .main-actions{grid-template-columns:1fr 1fr;gap:8px}
+      .main-actions .btn{padding:11px 9px;font-size:.9rem}
     }
   </style>
 </head>
@@ -561,102 +667,120 @@
     </div>
 
     <section class="card">
-      <h2 class="section-title">Fondo y pantalla</h2>
-      <div class="grid">
-        <div class="field">
-          <label for="bgType">Tipo de fondo</label>
-          <select id="bgType">
-            <option value="solid">Color sólido</option>
-            <option value="gradient">Degradado</option>
-            <option value="image">Imagen de la galería</option>
-          </select>
-        </div>
+      <nav class="tabs" aria-label="Secciones de CartelGo">
+        <button class="tab-btn active" type="button" data-tab="screen">🖥️ Pantalla</button>
+        <button class="tab-btn" type="button" data-tab="text">🔤 Texto</button>
+        <button class="tab-btn" type="button" data-tab="saved">💾 Guardados</button>
+        <button class="tab-btn" type="button" data-tab="help">ℹ️ Instrucciones</button>
+      </nav>
 
-        <div class="field" id="gradientDirectionField">
-          <label for="gradientDirection">Dirección del degradado</label>
-          <select id="gradientDirection">
-            <option value="90deg">Izquierda → derecha</option>
-            <option value="270deg">Derecha → izquierda</option>
-            <option value="180deg">Arriba → abajo</option>
-            <option value="0deg">Abajo → arriba</option>
-            <option value="135deg">Diagonal ↘</option>
-            <option value="45deg">Diagonal ↗</option>
-          </select>
-        </div>
+      <div class="main-actions" aria-label="Acciones principales">
+        <button id="showBtn" class="btn btn-primary" type="button">Mostrar cartel</button>
+        <button id="startSequenceBtn" class="btn btn-secondary" type="button">Iniciar secuencia</button>
+      </div>
 
-        <div class="field full" id="solidGradientColors">
-          <div class="colors">
-            <label class="color-item" for="bgColor1">
-              Fondo / color 1
-              <input id="bgColor1" type="color" value="#000000">
-            </label>
-            <label class="color-item" for="bgColor2">
-              Color 2 del degradado
-              <input id="bgColor2" type="color" value="#172554">
-            </label>
+      <div id="tab-screen" class="tab-panel active">
+        <p class="panel-intro">Elige el fondo y cómo quieres que se comporte la pantalla al mostrar el cartel.</p>
+
+        <div class="compact-heading"><h2>Pantalla y fondo</h2></div>
+        <div class="grid">
+          <div class="field">
+            <label for="bgType">Tipo de fondo</label>
+            <select id="bgType">
+              <option value="solid">Color sólido</option>
+              <option value="gradient">Degradado</option>
+              <option value="image">Imagen de la galería</option>
+            </select>
           </div>
-        </div>
 
-        <div id="imageOptions" class="field full hidden">
-          <label for="bgImageInput">Imagen de fondo</label>
-          <input id="bgImageInput" type="file" accept="image/*">
-          <div class="hint">La imagen se guarda localmente en este dispositivo y no se sube a ningún servidor.</div>
+          <div class="field" id="gradientDirectionField">
+            <label for="gradientDirection">Dirección del degradado</label>
+            <select id="gradientDirection">
+              <option value="90deg">Izquierda → derecha</option>
+              <option value="270deg">Derecha → izquierda</option>
+              <option value="180deg">Arriba → abajo</option>
+              <option value="0deg">Abajo → arriba</option>
+              <option value="135deg">Diagonal ↘</option>
+              <option value="45deg">Diagonal ↗</option>
+            </select>
+          </div>
 
-          <div class="image-preview-wrap">
-            <img id="bgImagePreview" class="image-preview hidden" alt="Vista previa del fondo">
-            <div>
-              <div class="grid">
-                <div class="field">
-                  <label for="imageFit">Ajuste</label>
-                  <select id="imageFit">
-                    <option value="cover">Cubrir toda la pantalla</option>
-                    <option value="contain">Mostrar completa</option>
-                    <option value="100% 100%">Estirar</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="imagePosition">Posición</label>
-                  <select id="imagePosition">
-                    <option value="center">Centro</option>
-                    <option value="top">Arriba</option>
-                    <option value="bottom">Abajo</option>
-                    <option value="left">Izquierda</option>
-                    <option value="right">Derecha</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="imageOverlay">Oscurecer fondo</label>
-                  <div class="range-row">
-                    <input id="imageOverlay" type="range" min="0" max="80" value="20">
-                    <input id="imageOverlayNum" type="number" min="0" max="80" value="20">
+          <div class="field full" id="solidGradientColors">
+            <div class="colors">
+              <label class="color-item" for="bgColor1">Fondo / color 1<input id="bgColor1" type="color" value="#000000"></label>
+              <label class="color-item" for="bgColor2">Color 2 del degradado<input id="bgColor2" type="color" value="#172554"></label>
+            </div>
+          </div>
+
+          <div id="imageOptions" class="field full hidden">
+            <label for="bgImageInput">Imagen de fondo</label>
+            <input id="bgImageInput" type="file" accept="image/*">
+            <div class="hint">La imagen se guarda solo en este dispositivo.</div>
+            <div class="image-preview-wrap">
+              <img id="bgImagePreview" class="image-preview hidden" alt="Vista previa del fondo">
+              <div>
+                <div class="grid">
+                  <div class="field">
+                    <label for="imageFit">Ajuste</label>
+                    <select id="imageFit">
+                      <option value="cover">Cubrir toda la pantalla</option>
+                      <option value="contain">Mostrar completa</option>
+                      <option value="100% 100%">Estirar</option>
+                    </select>
                   </div>
-                  <div class="hint">Útil para que el texto se lea mejor sobre fotografías.</div>
+                  <div class="field">
+                    <label for="imagePosition">Posición</label>
+                    <select id="imagePosition">
+                      <option value="center">Centro</option>
+                      <option value="top">Arriba</option>
+                      <option value="bottom">Abajo</option>
+                      <option value="left">Izquierda</option>
+                      <option value="right">Derecha</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="imageOverlay">Oscurecer fondo</label>
+                    <div class="range-row">
+                      <input id="imageOverlay" type="range" min="0" max="80" value="20">
+                      <input id="imageOverlayNum" type="number" min="0" max="80" value="20">
+                    </div>
+                  </div>
+                </div>
+                <div class="mini-actions" style="margin-top:10px">
+                  <button id="removeImageBtn" class="mini-btn" type="button">Quitar imagen</button>
                 </div>
               </div>
-              <div class="mini-actions" style="margin-top:10px">
-                <button id="removeImageBtn" class="mini-btn" type="button">Quitar imagen</button>
-              </div>
+            </div>
+          </div>
+
+          <div class="field full">
+            <div class="checks">
+              <label class="check"><input id="keepAwake" type="checkbox" checked> Mantener pantalla activa</label>
+              <label class="check"><input id="tryLandscape" type="checkbox" checked> Intentar horizontal</label>
             </div>
           </div>
         </div>
 
-        <div class="field full">
-          <div class="checks">
-            <label class="check"><input id="keepAwake" type="checkbox" checked> Mantener pantalla activa</label>
-            <label class="check"><input id="tryLandscape" type="checkbox" checked> Intentar horizontal</label>
-          </div>
+        <div class="actions" style="margin-top:18px">
+          <button id="resetBtn" class="btn btn-secondary" type="button">Restablecer configuración</button>
+          <button id="installBtn" class="btn btn-secondary hidden" type="button">Instalar PWA</button>
         </div>
       </div>
 
-      <h2 class="section-title" style="margin-top:22px">Textos</h2>
-      <div id="lineEditors"></div>
+      <div id="tab-text" class="tab-panel">
+        <p class="panel-intro">Abre solo la línea que quieras editar. Las tres permanecen recogidas para mantener la pantalla compacta.</p>
+        <div class="compact-heading"><h2>Textos</h2><span class="line-chip">hasta 3 líneas</span></div>
+        <div id="lineEditors"></div>
+        <p class="footer-note">Cada línea es independiente y los efectos se pueden combinar: por ejemplo, desplazamiento + parpadeo + LED.</p>
+      </div>
 
-      <div class="saved-section">
-        <h2 class="section-title">Carteles guardados</h2>
+      <div id="tab-saved" class="tab-panel">
+        <p class="panel-intro">Guarda la configuración actual, recupérala después o selecciona varios carteles para reproducirlos automáticamente.</p>
+
         <div class="subcard" style="margin-top:0">
           <div class="save-bar">
             <div class="field">
-              <label for="presetName">Nombre para guardar este cartel</label>
+              <label for="presetName">Nombre para guardar la configuración actual</label>
               <input id="presetName" type="text" maxlength="50" placeholder="Ej.: Aeropuerto - García">
             </div>
             <button id="savePresetBtn" class="btn btn-secondary" type="button">Guardar cartel</button>
@@ -686,7 +810,6 @@
             </div>
             <div class="hint">Marca “Secuencia” en los carteles guardados. Se reproducen en el orden en que los selecciones.</div>
             <div class="actions" style="margin-top:12px">
-              <button id="startSequenceBtn" class="btn btn-primary" type="button">Iniciar secuencia</button>
               <button id="clearSequenceBtn" class="btn btn-secondary" type="button">Vaciar selección</button>
             </div>
           </div>
@@ -695,15 +818,55 @@
         </div>
       </div>
 
-      <div class="actions">
-        <button id="showBtn" class="btn btn-primary" type="button">Mostrar cartel</button>
-        <button id="installBtn" class="btn btn-secondary hidden" type="button">Instalar PWA</button>
-        <button id="resetBtn" class="btn btn-secondary" type="button">Restablecer</button>
-      </div>
+      <div id="tab-help" class="tab-panel">
+        <p class="panel-intro">Guía rápida de CartelGo. Todo se organiza en cuatro pestañas y los cambios se guardan localmente en el dispositivo.</p>
 
-      <p class="footer-note">
-        Puedes combinar efectos: por ejemplo, una misma línea puede desplazarse y parpadear al mismo tiempo.
-      </p>
+        <div class="instruction-grid">
+          <article class="instruction-card">
+            <div class="instruction-icon">🎨</div>
+            <h3>1. Pantalla y fondo</h3>
+            <p>En la pestaña Pantalla elige color sólido, degradado o una foto de tu galería. También puedes oscurecer la fotografía y controlar orientación y pantalla activa.</p>
+            <div class="mini-diagram">Pantalla → color · degradado · imagen</div>
+          </article>
+
+          <article class="instruction-card">
+            <div class="instruction-icon">🔤</div>
+            <h3>2. Configura hasta 3 líneas</h3>
+            <p>En Texto encontrarás Línea 1, 2 y 3 inicialmente recogidas. Abre solo la que necesites; cada una tiene su propia fuente, tamaño, color, contorno, mayúsculas y estilo LED.</p>
+            <div class="mini-diagram">Línea 1<br>Línea 2 <span style="opacity:.65">(opcional)</span><br>Línea 3 <span style="opacity:.65">(opcional)</span></div>
+          </article>
+
+          <article class="instruction-card">
+            <div class="instruction-icon">✨</div>
+            <h3>3. Combina efectos</h3>
+            <p>Parpadeo, desplazamiento y pulso pueden funcionar a la vez. El desplazamiento puede ir a izquierda o derecha y cada efecto tiene su velocidad.</p>
+            <div class="mini-diagram">← scroll + parpadeo ✦ + LED</div>
+          </article>
+
+          <article class="instruction-card">
+            <div class="instruction-icon">📺</div>
+            <h3>4. Muestra el cartel</h3>
+            <p>El botón “Mostrar cartel” está siempre debajo de las cuatro pestañas. CartelGo cubre la zona visible de la PWA sin activar el fullscreen nativo del navegador.</p>
+            <div class="mini-diagram">Mostrar cartel → ✕ para volver</div>
+          </article>
+
+          <article class="instruction-card">
+            <div class="instruction-icon">💾</div>
+            <h3>5. Guarda tus carteles</h3>
+            <p>En Guardados, pon un nombre y pulsa “Guardar cartel”. También se conserva la imagen de fondo si la configuración la utiliza.</p>
+            <div class="mini-diagram">Cargar = editar · Ver = mostrar · Borrar = eliminar</div>
+          </article>
+
+          <article class="instruction-card">
+            <div class="instruction-icon">🔁</div>
+            <h3>6. Crea una secuencia</h3>
+            <p>En Guardados marca “Secuencia” en varios carteles y define el tiempo y la repetición. Después usa “Iniciar secuencia”, siempre visible debajo de las pestañas.</p>
+            <div class="mini-diagram">Cartel A → Cartel B → Cartel C → repetir</div>
+          </article>
+        </div>
+
+        <div class="help-note">Consejo: para recogidas, nombres largos o aeropuertos suele funcionar muy bien el ajuste automático de tamaño con alto contraste entre texto y fondo.</div>
+      </div>
     </section>
   </main>
 
@@ -763,6 +926,8 @@
     resetBtn: $('resetBtn'),
     themeBtn: $('themeBtn'),
     installBtn: $('installBtn'),
+    tabButtons:[...document.querySelectorAll('.tab-btn')],
+    tabPanels:[...document.querySelectorAll('.tab-panel')],
     presetName: $('presetName'),
     savePresetBtn: $('savePresetBtn'),
     presetList: $('presetList'),
@@ -840,13 +1005,18 @@
     return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
   }
 
+  function switchTab(name){
+    els.tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === name));
+    els.tabPanels.forEach(panel => panel.classList.toggle('active', panel.id === `tab-${name}`));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
   function buildLineEditors(){
     els.lineEditors.innerHTML = '';
     for(let i=0;i<3;i++){
       const n = i+1;
       const details = document.createElement('details');
       details.className = 'subcard';
-      if(n === 1) details.open = true;
 
       const fontOptions = FONT_OPTIONS.map(([value,label]) =>
         `<option value="${escapeAttr(value)}">${label}</option>`).join('');
@@ -1509,7 +1679,7 @@
 
     saveSettings();
     setPresetStatus(`“${record.name}” cargado en el editor.`);
-    window.scrollTo({top:0,behavior:'smooth'});
+    switchTab('text');
   }
 
   async function showSavedPreset(id){
@@ -1721,26 +1891,11 @@
     els.displayView.classList.remove('hidden');
     els.displayView.classList.remove('controls-visible');
     updateRotateTip();
-    await requestFullscreen();
     await lockLandscape();
     await requestWakeLock();
     setTimeout(() => refitPoster(currentRenderedSettings),160);
   }
 
-  async function requestFullscreen(){
-    const el = els.displayView;
-    try{
-      if(el.requestFullscreen) await el.requestFullscreen({navigationUI:'hide'});
-      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    }catch{}
-  }
-
-  async function exitFullscreen(){
-    try{
-      if(document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen();
-      else if(document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
-    }catch{}
-  }
 
   async function lockLandscape(){
     if(!els.tryLandscape.checked) return;
@@ -1791,7 +1946,6 @@
     els.sequenceBadge.classList.add('hidden');
     await releaseWakeLock();
     await unlockOrientation();
-    await exitFullscreen();
     els.displayView.classList.add('hidden');
     els.configView.classList.remove('hidden');
   }
@@ -1810,6 +1964,10 @@
   syncSequenceControlsFromStorage();
   restoreSavedImage();
   renderPresetList();
+
+  els.tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
 
   els.showBtn.addEventListener('click', showPoster);
   els.savePresetBtn.addEventListener('click', saveCurrentPreset);
