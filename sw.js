@@ -1,10 +1,11 @@
-const CACHE_NAME = 'cartelgo-pwa-v4-20260923b';
+const CACHE_NAME = 'cartelgo-pwa-v4-20260923c';
 const ASSETS = [
-  './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './apple-touch-icon.png',
+  './favicon-64.png'
 ];
 
 self.addEventListener('install', event => {
@@ -15,7 +16,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  // No se enumeran ni se borran caches ajenas.
+  // Esta PWA no enumera ni borra cachés de otras apps ni versiones anteriores.
   event.waitUntil(self.clients.claim());
 });
 
@@ -25,23 +26,38 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if(url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    caches.open(CACHE_NAME).then(async cache => {
-      const cached = await cache.match(event.request);
-      if(cached) return cached;
-
+  // Para la propia página: RED PRIMERO.
+  // Así F5 obtiene la versión publicada en GitHub y la caché queda solo como respaldo offline.
+  if(event.request.mode === 'navigate' || url.pathname.endsWith('/index.html')){
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
       try{
-        const response = await fetch(event.request);
-        if(response && response.status === 200 && response.type !== 'opaque'){
-          cache.put(event.request, response.clone());
+        const response = await fetch(event.request, {cache:'no-store'});
+        if(response && response.ok){
+          cache.put('./index.html', response.clone());
         }
         return response;
       }catch{
-        if(event.request.mode === 'navigate'){
-          return (await cache.match('./index.html')) || Response.error();
-        }
-        return Response.error();
+        return (await cache.match('./index.html')) || Response.error();
       }
-    })
-  );
+    })());
+    return;
+  }
+
+  // Recursos estáticos: caché propia primero, red como respaldo/actualización si faltan.
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const cached = await cache.match(event.request);
+    if(cached) return cached;
+
+    try{
+      const response = await fetch(event.request);
+      if(response && response.ok && response.type !== 'opaque'){
+        cache.put(event.request, response.clone());
+      }
+      return response;
+    }catch{
+      return Response.error();
+    }
+  })());
 });

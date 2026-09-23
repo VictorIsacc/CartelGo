@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <title>CartelGo</title>
+  <!-- CartelGo build: V4.1-20260923c -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="64x64" href="./favicon-64.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
@@ -2093,7 +2094,7 @@
 
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(()=>{});
+      navigator.serviceWorker.register('./sw.js', {scope:'./', updateViaCache:'none'}).then(reg => reg.update()).catch(()=>{});
     });
   }
 })();
