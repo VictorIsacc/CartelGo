@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -19,6 +17,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
     private static final String START_URL = "https://victorisacc.github.io/CartelGo/";
@@ -31,12 +30,25 @@ public class MainActivity extends Activity {
     @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            configureWindow();
+            createWebView(savedInstanceState);
+        } catch (Throwable error) {
+            showStartupError(error);
+        }
+    }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    private void configureWindow() {
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.setStatusBarColor(Color.BLACK);
+        window.setNavigationBarColor(Color.BLACK);
         applyImmersiveMode();
+    }
 
+    @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
+    private void createWebView(Bundle savedInstanceState) {
         webView = new WebView(this);
         webView.setBackgroundColor(Color.BLACK);
         setContentView(webView);
@@ -50,7 +62,9 @@ public class MainActivity extends Activity {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
-        settings.setUserAgentString(settings.getUserAgentString() + " CartelGoAndroid/1.0");
+
+        String ua = settings.getUserAgentString();
+        settings.setUserAgentString((ua == null ? "" : ua) + " CartelGoAndroid/1.1");
 
         webView.addJavascriptInterface(new CartelBridge(), "CartelNative");
 
@@ -59,6 +73,7 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 injectNativeHooks();
+                applyImmersiveMode();
             }
 
             @Override
@@ -79,9 +94,10 @@ public class MainActivity extends Activity {
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
-            public boolean onShowFileChooser(WebView webView,
-                                             ValueCallback<Uri[]> filePathCallbackParam,
-                                             FileChooserParams fileChooserParams) {
+            public boolean onShowFileChooser(
+                    WebView webView,
+                    ValueCallback<Uri[]> filePathCallbackParam,
+                    FileChooserParams fileChooserParams) {
                 if (filePathCallback != null) {
                     filePathCallback.onReceiveValue(null);
                 }
@@ -104,7 +120,25 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void showStartupError(Throwable error) {
+        TextView message = new TextView(this);
+        message.setTextColor(Color.WHITE);
+        message.setBackgroundColor(Color.rgb(7, 26, 66));
+        message.setTextSize(18f);
+        message.setGravity(Gravity.CENTER);
+        message.setPadding(40, 40, 40, 40);
+        String type = error.getClass().getSimpleName();
+        String detail = error.getMessage();
+        message.setText("CartelGo no ha podido iniciar.\n\n" + type +
+                (detail == null ? "" : "\n" + detail) +
+                "\n\nHaz una captura de esta pantalla para poder corregirlo.");
+        setContentView(message);
+        applyImmersiveMode();
+    }
+
     private void injectNativeHooks() {
+        if (webView == null) return;
+
         String js = "(function(){"
                 + "if(window.__cartelGoNativeHooked)return;window.__cartelGoNativeHooked=true;"
                 + "function sync(){try{var d=document.getElementById('displayView');"
@@ -112,43 +146,44 @@ public class MainActivity extends Activity {
                 + "else{CartelNative.exitPoster();}}catch(e){}}"
                 + "var d=document.getElementById('displayView');"
                 + "if(d){new MutationObserver(sync).observe(d,{attributes:true,attributeFilter:['class']});}"
-                + "var s=document.getElementById('showBtn');if(s)s.addEventListener('click',function(){CartelNative.enterPoster();},true);"
-                + "var q=document.getElementById('startSequenceBtn');if(q)q.addEventListener('click',function(){CartelNative.enterPoster();},true);"
-                + "var e=document.getElementById('editBtn');if(e)e.addEventListener('click',function(){CartelNative.exitPoster();},true);"
+                + "var s=document.getElementById('showBtn');"
+                + "if(s)s.addEventListener('click',function(){CartelNative.enterPoster();},true);"
+                + "var q=document.getElementById('startSequenceBtn');"
+                + "if(q)q.addEventListener('click',function(){CartelNative.enterPoster();},true);"
+                + "var e=document.getElementById('editBtn');"
+                + "if(e)e.addEventListener('click',function(){CartelNative.exitPoster();},true);"
                 + "sync();"
                 + "})();";
-        webView.evaluateJavascript(js, null);
+
+        try {
+            webView.evaluateJavascript(js, null);
+        } catch (Throwable ignored) {}
     }
 
+    @SuppressWarnings("deprecation")
     private void applyImmersiveMode() {
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false);
-            WindowInsetsController controller = window.getInsetsController();
-            if (controller != null) {
-                controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
-                controller.setSystemBarsBehavior(
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                );
-            }
-        } else {
+        try {
             final int flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            window.getDecorView().setSystemUiVisibility(flags);
-        }
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+        } catch (Throwable ignored) {}
     }
 
     private void enterPosterNative() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        try {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } catch (Throwable ignored) {}
         applyImmersiveMode();
     }
 
     private void exitPosterNative() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        try {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        } catch (Throwable ignored) {}
         applyImmersiveMode();
     }
 
@@ -183,7 +218,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (webView != null) webView.saveState(outState);
+        if (webView != null) {
+            try {
+                webView.saveState(outState);
+            } catch (Throwable ignored) {}
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -205,9 +244,11 @@ public class MainActivity extends Activity {
             super.onBackPressed();
             return;
         }
+
         String js = "(function(){var d=document.getElementById('displayView');"
-                + "if(d&&!d.classList.contains('hidden')){var b=document.getElementById('editBtn');if(b)b.click();return 'poster';}"
-                + "return 'normal';})();";
+                + "if(d&&!d.classList.contains('hidden')){var b=document.getElementById('editBtn');"
+                + "if(b)b.click();return 'poster';}return 'normal';})();";
+
         webView.evaluateJavascript(js, value -> {
             if (value != null && value.contains("poster")) {
                 return;
@@ -223,8 +264,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         if (webView != null) {
-            webView.removeJavascriptInterface("CartelNative");
-            webView.destroy();
+            try {
+                webView.removeJavascriptInterface("CartelNative");
+                webView.destroy();
+            } catch (Throwable ignored) {}
         }
         super.onDestroy();
     }
